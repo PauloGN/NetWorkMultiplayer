@@ -7,11 +7,13 @@
 APickup::APickup()
 {
 	//Tell Ue4 to replicate this actor
-	bReplicates = true;
+	bReplicates = true;//SetReplicates(true);
 
 	//disable event tick
 	PrimaryActorTick.bCanEverTick = false;
 
+
+	//setting up default value safely
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		bIsActive = true;
