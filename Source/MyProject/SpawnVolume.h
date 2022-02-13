@@ -20,7 +20,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	// Returns spawn volumes box components
-	FORCEINLINE UBoxComponent* GetWhereToSpawn() const {return whereToSpawn};
+	FORCEINLINE class UBoxComponent* GetWhereToSpawn()const { return whereToSpawn;};
+
+	// Find a random point within the box component
+	UFUNCTION(BlueprintPure, Category = "Spawning")
+	FVector GetRandomPointInVolume() const;
 
 public:	
 	// Called every frame

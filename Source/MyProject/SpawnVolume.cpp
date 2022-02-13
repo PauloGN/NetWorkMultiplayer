@@ -3,6 +3,7 @@
 
 #include "SpawnVolume.h"
 #include  "Components/BoxComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASpawnVolume::ASpawnVolume()
@@ -25,6 +26,21 @@ void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+//Returns a random value within the bound box
+FVector ASpawnVolume::GetRandomPointInVolume() const
+{
+	if (whereToSpawn)
+	{
+		FVector spawnOrigin = whereToSpawn->Bounds.Origin;
+		FVector spawnExtend = whereToSpawn->Bounds.BoxExtent;
+
+		return UKismetMathLibrary::RandomPointInBoundingBox(spawnOrigin, spawnExtend);
+	}
+
+
+	return FVector();
 }
 
 // Called every frame
