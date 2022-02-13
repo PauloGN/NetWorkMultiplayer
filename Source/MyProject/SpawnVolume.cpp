@@ -4,6 +4,7 @@
 #include "SpawnVolume.h"
 #include  "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Pickup.h"
 
 // Sets default values
 ASpawnVolume::ASpawnVolume()
@@ -41,6 +42,45 @@ FVector ASpawnVolume::GetRandomPointInVolume() const
 
 
 	return FVector();
+}
+
+void ASpawnVolume::SpawnPickup()
+{
+
+	// If we are the server and we have something to spawn
+
+	if (GetLocalRole() == ROLE_Authority && IsValid(whatToSpawn))
+	{
+		//Check for Valid World
+		if (UWorld* world = GetWorld())
+		{
+			// Set up any parameter/info
+			FActorSpawnParameters spawnParams;
+
+			spawnParams.Owner = this;
+			spawnParams.Instigator = GetInstigator();
+
+			//where shall we put the pick up
+
+			FVector spawnLocation = GetRandomPointInVolume();
+
+			//set a random rotation for the spawned pickup
+
+			FRotator spawnRotation;
+
+			spawnRotation.Yaw = FMath::FRand() * 360.0f;
+			spawnRotation.Pitch = FMath::FRand() * 360.0f;
+			spawnRotation.Roll = FMath::FRand() * 360.0f;
+
+			//drop the new pickup into the world and get its reference
+
+			APickup* spawnedPickup = world->SpawnActor<APickup>(whatToSpawn, spawnLocation, spawnRotation, spawnParams);
+
+		}
+
+	}
+
+
 }
 
 // Called every frame

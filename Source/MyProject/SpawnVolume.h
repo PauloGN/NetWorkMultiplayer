@@ -15,16 +15,27 @@ public:
 	// Sets default values for this actor's properties
 	ASpawnVolume();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	// Returns spawn volumes box components
 	FORCEINLINE class UBoxComponent* GetWhereToSpawn()const { return whereToSpawn;};
 
 	// Find a random point within the box component
 	UFUNCTION(BlueprintPure, Category = "Spawning")
 	FVector GetRandomPointInVolume() const;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	//This is the pickup to spawn
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+	TSubclassOf<class APickup> whatToSpawn;
+
+
+private:
+
+	//Handle spawning new pick up
+	void SpawnPickup();
+
 
 public:	
 	// Called every frame
