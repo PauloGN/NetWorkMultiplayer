@@ -8,7 +8,7 @@ ABatteryPickup::ABatteryPickup()
 	//Keep movement synced from server to client
 
 	SetReplicates(true);
-	SetReplicateMovement(true);
+	AActor::SetReplicateMovement(true);
 
 
 	// This pickup is physics enabled and should move

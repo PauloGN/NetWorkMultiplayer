@@ -20,11 +20,11 @@ public:
 	APickup();
 
 	// Required network scaffolding 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Return whether or not the pickup is active
 	UFUNCTION(BlueprintPure, Category = "Pickup")
-	bool IsActive();
+	bool IsActive()const;
 
 	// This allows the other classes to safely change the pickup's activation state
 	UFUNCTION(BlueprintCallable, Category = "Pickup")

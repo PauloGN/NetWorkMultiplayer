@@ -4,6 +4,7 @@
 #include "SpawnVolume.h"
 #include  "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine.h"
 #include "Pickup.h"
 
 // Sets default values
@@ -18,6 +19,10 @@ ASpawnVolume::ASpawnVolume()
 		whereToSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("Spawn Volume"));
 		RootComponent = whereToSpawn;
 
+		//set some bases values for range time
+		spawnTimerLow = 1.0f;
+		spawnTimerHigh = 5.0f;
+
 	}
 
 }
@@ -26,6 +31,10 @@ ASpawnVolume::ASpawnVolume()
 void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//set the timer to start spawning pickups
+	SpawnDelay = FMath::FRandRange(spawnTimerLow, spawnTimerHigh);
+	GetWorldTimerManager().SetTimer(spawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 	
 }
 
@@ -34,8 +43,8 @@ FVector ASpawnVolume::GetRandomPointInVolume() const
 {
 	if (whereToSpawn)
 	{
-		FVector spawnOrigin = whereToSpawn->Bounds.Origin;
-		FVector spawnExtend = whereToSpawn->Bounds.BoxExtent;
+		const FVector spawnOrigin = whereToSpawn->Bounds.Origin;
+		const FVector spawnExtend = whereToSpawn->Bounds.BoxExtent;
 
 		return UKismetMathLibrary::RandomPointInBoundingBox(spawnOrigin, spawnExtend);
 	}
@@ -62,7 +71,7 @@ void ASpawnVolume::SpawnPickup()
 
 			//where shall we put the pick up
 
-			FVector spawnLocation = GetRandomPointInVolume();
+			const FVector spawnLocation = GetRandomPointInVolume();
 
 			//set a random rotation for the spawned pickup
 
@@ -74,7 +83,11 @@ void ASpawnVolume::SpawnPickup()
 
 			//drop the new pickup into the world and get its reference
 
-			APickup* spawnedPickup = world->SpawnActor<APickup>(whatToSpawn, spawnLocation, spawnRotation, spawnParams);
+			APickup* const spawnedPickup = world->SpawnActor<APickup>(whatToSpawn, spawnLocation, spawnRotation, spawnParams);
+
+			//Delay for a bit before spawning the next pickup
+			SpawnDelay = FMath::FRandRange(spawnTimerLow, spawnTimerHigh);
+			GetWorldTimerManager().SetTimer(spawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 
 		}
 
